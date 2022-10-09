@@ -1,7 +1,8 @@
 import {Configuration, OpenAIApi} from "openai";
+import Logger from "/opt/nodejs/Logger";
 
 export const handler = async (event: any) => {
-    console.log('Event:', event);
+    Logger.info('Event:', event);
 
     const configuration = new Configuration({
         apiKey: process.env.OPENAI_API_KEY,
@@ -17,6 +18,9 @@ export const handler = async (event: any) => {
         frequency_penalty: 0,
         presence_penalty: 0,
     });
+
+    Logger.info('response', response);
+    Logger.info('response JSON', JSON.stringify(response.data));
 
     return {
         response

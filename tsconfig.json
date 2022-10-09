@@ -3,7 +3,8 @@
     "target": "ES2018",
     "module": "commonjs",
     "lib": [
-      "es2018"
+      "es2018",
+      "DOM"
     ],
     "declaration": true,
     "strict": true,
@@ -20,9 +21,13 @@
     "experimentalDecorators": true,
     "strictPropertyInitialization": false,
     "outDir": "dist/",
+    "baseUrl": "./",
     "typeRoots": [
       "./node_modules/@types"
-    ]
+    ],
+    "paths": {
+      "/opt/nodejs/Logger": ["./lib/lambda/layer/nodejs/Logger"]
+    }
   },
   "exclude": [
     "node_modules",
