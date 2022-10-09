@@ -46,7 +46,7 @@ export const handler = async (event: any) => {
     const openai = new OpenAIApi(configuration);
     const response = await openai.createCompletion({
         model: "text-davinci-002",
-        prompt: "get me a sentence with a mouse",
+        prompt: "generate a random situation with a mouse.",
         temperature: 0.7,
         max_tokens: 256,
         top_p: 1,
