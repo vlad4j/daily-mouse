@@ -1,4 +1,4 @@
-import {Stack, StackProps} from 'aws-cdk-lib';
+import {Duration, Stack, StackProps} from 'aws-cdk-lib';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import { Construct } from 'constructs';
 import {Runtime} from "aws-cdk-lib/aws-lambda";
@@ -54,6 +54,7 @@ export class MouseStack extends Stack {
       handler: 'mouseLambda.handler',
       layers: [this.nodeJSLayer],
       architecture: lambda.Architecture.ARM_64,
+      timeout: Duration.minutes(3),
       environment: {
         API_KEYS_SECRET_NAME: 'API_KEYS'
       },

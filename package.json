@@ -10,7 +10,7 @@
     "test": "jest",
     "cdk": "cdk",
     "build_layers": "subpkg install && sh build_layers.sh",
-    "clean": "tsc --build --clean"
+    "clean": "rm -rf dist"
   },
   "devDependencies": {
     "@types/jest": "^27.5.2",
@@ -19,12 +19,15 @@
     "aws-cdk": "2.45.0",
     "aws-cdk-lib": "2.45.0",
     "aws-sdk": "^2.1231.0",
+    "axios": "^1.1.2",
     "constructs": "^10.0.0",
+    "deepai": "^1.0.21",
     "jest": "^27.5.1",
     "openai": "^3.0.0",
     "subpackage": "^1.1.0",
     "ts-jest": "^27.1.4",
     "ts-node": "^10.9.1",
-    "typescript": "~3.9.7"
+    "twitter-api-v2": "^1.12.8",
+    "typescript": "^4.8.4"
   }
 }
