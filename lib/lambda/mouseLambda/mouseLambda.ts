@@ -46,7 +46,7 @@ export const handler = async (event: any) => {
     const openai = new OpenAIApi(configuration);
     const response = await openai.createCompletion({
         model: "text-davinci-002",
-        prompt: "generate a random situation with a mouse.",
+        prompt: "generate a random situation with a mouse limited to 250 characters.",
         temperature: 0.7,
         max_tokens: 256,
         top_p: 1,
@@ -63,7 +63,7 @@ export const handler = async (event: any) => {
     Logger.info('DeepAI response:', resp);
     const imageUrl = resp.output_url;
 
-    await postATweet(secret, `Generated with Stable Diffusion.\n\nContext: ${mouseContextSentence}`, imageUrl);
+    await postATweet(secret, `Stable Diffusion.\n\nContext: ${mouseContextSentence}`, imageUrl);
 
     return {
         mouseContextSentence,
