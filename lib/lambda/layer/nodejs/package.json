@@ -9,7 +9,8 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "openai": "^3.0.0"
+    "openai": "^3.0.0",
+    "aws-sdk": "^2.1231.0"
   },
   "author": "",
   "license": "ISC"

@@ -26,11 +26,12 @@
       "./node_modules/@types"
     ],
     "paths": {
-      "/opt/nodejs/Logger": ["./lib/lambda/layer/nodejs/Logger"]
+      "/opt/nodejs/*": ["./lib/lambda/layer/nodejs/*"]
     }
   },
   "exclude": [
     "node_modules",
-    "cdk.out"
+    "cdk.out",
+    "dist"
   ]
 }

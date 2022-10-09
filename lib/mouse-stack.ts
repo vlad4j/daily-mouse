@@ -3,6 +3,7 @@ import * as lambda from 'aws-cdk-lib/aws-lambda';
 import { Construct } from 'constructs';
 import {Runtime} from "aws-cdk-lib/aws-lambda";
 import {LambdaCode} from "./helper/codeHelper";
+import {PolicyDocument, PolicyStatement, Role, ServicePrincipal} from "aws-cdk-lib/aws-iam";
 
 export class MouseStack extends Stack {
   private nodeJSLayer: lambda.LayerVersion;
@@ -16,7 +17,6 @@ export class MouseStack extends Stack {
   }
 
   private createModeJsLayer() {
-
     return new lambda.LayerVersion(this, 'CommonLayer', {
       code: LambdaCode.fromDist('layer/nodejs/nodejs.zip'),
       compatibleRuntimes: [lambda.Runtime.NODEJS_16_X],
@@ -25,7 +25,28 @@ export class MouseStack extends Stack {
   }
 
   private createMouseLambda() {
-    let functionName = `MouseLambda`;
+    const functionName = `MouseLambda`;
+    const roleName = `${functionName}Role`;
+
+    const lambdaRole = new Role(this, roleName, {
+      roleName: `${roleName}-${this.stackName}`,
+      assumedBy: new ServicePrincipal('lambda.amazonaws.com'),
+      inlinePolicies: {
+        logs: new PolicyDocument({
+          statements: [new PolicyStatement({
+            resources: ['*'],
+            actions: ['logs:CreateLogGroup', 'logs:CreateLogStream', 'logs:PutLogEvents']
+          })]
+        }),
+        secrets: new PolicyDocument({
+          statements: [new PolicyStatement({
+            resources: ['*'],
+            actions: ['secretsmanager:GetSecretValue']
+          })]
+        })
+      }
+    });
+
     return new lambda.Function(this, functionName, {
       runtime: Runtime.NODEJS_16_X,
       functionName: `${functionName}-${this.stackName}`,
@@ -34,8 +55,9 @@ export class MouseStack extends Stack {
       layers: [this.nodeJSLayer],
       architecture: lambda.Architecture.ARM_64,
       environment: {
-        OPENAI_API_KEY: ''
-      }
+        API_KEYS_SECRET_NAME: 'API_KEYS'
+      },
+      role: lambdaRole
     });
   }
 

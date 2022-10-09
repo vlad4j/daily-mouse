@@ -1,11 +1,15 @@
 import {Configuration, OpenAIApi} from "openai";
 import Logger from "/opt/nodejs/Logger";
+import SecretClient from "/opt/nodejs/SecretClient";
+
+const OPEN_API_KEY_SECRET = 'OPENAI_API_KEY';
 
 export const handler = async (event: any) => {
     Logger.info('Event:', event);
+    const secret = await SecretClient.getSecret(process.env.API_KEYS_SECRET_NAME!);
 
     const configuration = new Configuration({
-        apiKey: process.env.OPENAI_API_KEY,
+        apiKey: secret[OPEN_API_KEY_SECRET],
     });
 
     const openai = new OpenAIApi(configuration);
@@ -19,11 +23,12 @@ export const handler = async (event: any) => {
         presence_penalty: 0,
     });
 
-    Logger.info('response', response);
-    Logger.info('response JSON', JSON.stringify(response.data));
+    const choice = response.data?.choices?.[0];
+    Logger.info('Response', choice);
 
+    const resultMessage = choice?.text || '';
     return {
-        response
+        message: resultMessage.trim()
     }
 };
 
