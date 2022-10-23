@@ -2,10 +2,10 @@ import {Duration, Stack, StackProps} from 'aws-cdk-lib';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import {Runtime} from 'aws-cdk-lib/aws-lambda';
 import {Construct} from 'constructs';
-import {LambdaCode} from "./helper/codeHelper";
-import {PolicyDocument, PolicyStatement, Role, ServicePrincipal} from "aws-cdk-lib/aws-iam";
-import {Rule, Schedule} from "aws-cdk-lib/aws-events";
-import {LambdaFunction} from "aws-cdk-lib/aws-events-targets";
+import {LambdaCode} from './helper/codeHelper';
+import {PolicyDocument, PolicyStatement, Role, ServicePrincipal} from 'aws-cdk-lib/aws-iam';
+import {Rule, Schedule} from 'aws-cdk-lib/aws-events';
+import {LambdaFunction} from 'aws-cdk-lib/aws-events-targets';
 
 export class MouseStack extends Stack {
   private nodeJSLayer: lambda.LayerVersion;
