@@ -14,6 +14,22 @@ const TWITTER_ACCESS_TOKEN = 'TWITTER_ACCESS_TOKEN';
 const TWITTER_ACCESS_SECRET = 'TWITTER_ACCESS_SECRET';
 
 
+
+const getPrompt = (): string => {
+  const prompts = [
+    'generate a random situation with a mouse limited to 250 characters.',
+    `Topic: Mouse
+Two-sentence story:`,
+    `Topic: Mouse in a wild
+Two-sentence story:`,
+    `Topic: Home mouse
+One-sentence story:`
+  ];
+
+  const rnd = Math.floor(Math.random() * prompts.length);
+  return prompts[rnd]
+};
+
 const downloadImage = async (url: string): Promise<Buffer> => {
   const imageResponse = await axios.get(url, {responseType: 'arraybuffer'})
   return Buffer.from(imageResponse.data, 'binary');
@@ -46,9 +62,9 @@ export const handler = async (event: any) => {
   const openai = new OpenAIApi(configuration);
   const response = await openai.createCompletion({
     model: 'text-davinci-002',
-    prompt: 'generate a random situation with a mouse limited to 250 characters.',
-    temperature: 0.7,
-    max_tokens: 256,
+    prompt: getPrompt(),
+    temperature: 0.8,
+    max_tokens: 50,
     top_p: 1,
     frequency_penalty: 0,
     presence_penalty: 0,
