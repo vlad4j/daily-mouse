@@ -1,15 +1,21 @@
 import {Duration, Stack, StackProps} from 'aws-cdk-lib';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
-import {Runtime} from 'aws-cdk-lib/aws-lambda';
+import {Architecture, Runtime} from 'aws-cdk-lib/aws-lambda';
+import * as s3 from 'aws-cdk-lib/aws-s3';
+import {BucketEncryption} from 'aws-cdk-lib/aws-s3';
+import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
 import {Construct} from 'constructs';
 import {LambdaCode} from './helper/codeHelper';
 import {PolicyDocument, PolicyStatement, Role, ServicePrincipal} from 'aws-cdk-lib/aws-iam';
-import {Rule, Schedule} from 'aws-cdk-lib/aws-events';
+import {Rule, RuleTargetInput, Schedule} from 'aws-cdk-lib/aws-events';
 import {LambdaFunction} from 'aws-cdk-lib/aws-events-targets';
+import ImageGeneratorType from './lambda/mouseLambda/types/ImageGeneratorType';
 
 export class MouseStack extends Stack {
   private nodeJSLayer: lambda.LayerVersion;
   private mouseLambda: lambda.IFunction;
+  private readonly bucketName: string = 'mice-pictures';
+  private readonly dynamoTableName: string = 'mice-pictures';
 
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
@@ -18,12 +24,28 @@ export class MouseStack extends Stack {
 
     this.mouseLambda = this.createMouseLambda();
 
+    const miceBucket = new s3.Bucket(this, this.bucketName, {
+      bucketName: this.bucketName,
+      versioned: false,
+      encryption: BucketEncryption.UNENCRYPTED,
+      blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
+    });
+    miceBucket.grantReadWrite(this.mouseLambda);
+
+    const dynamoTable = new dynamodb.Table(this, 'Table', {
+      tableName: this.dynamoTableName,
+      partitionKey: {name: 'PK', type: dynamodb.AttributeType.STRING},
+      sortKey: {name: 'SK', type: dynamodb.AttributeType.STRING}
+    });
+    dynamoTable.grantReadWriteData(this.mouseLambda);
+
     this.createMousePostRule();
   }
 
   private createMousePostRule() {
     const lambdaTarget = new LambdaFunction(this.mouseLambda, {
       maxEventAge: Duration.hours(2),
+      event: RuleTargetInput.fromObject({generator: ImageGeneratorType.DEEP_AI}),
       retryAttempts: 1
     });
 
@@ -37,7 +59,8 @@ export class MouseStack extends Stack {
     return new lambda.LayerVersion(this, 'CommonLayer', {
       code: LambdaCode.fromDist('layer/nodejs/nodejs.zip'),
       compatibleRuntimes: [lambda.Runtime.NODEJS_16_X],
-      description: 'A common lambda layer',
+      compatibleArchitectures: [Architecture.ARM_64],
+      description: 'A common lambda layer'
     });
   }
 
@@ -73,7 +96,9 @@ export class MouseStack extends Stack {
       architecture: lambda.Architecture.ARM_64,
       timeout: Duration.minutes(3),
       environment: {
-        API_KEYS_SECRET_NAME: 'API_KEYS'
+        API_KEYS_SECRET_NAME: 'API_KEYS',
+        DYNAMO_TABLE: this.dynamoTableName,
+        S3_BUCKET: this.bucketName
       },
       role: lambdaRole
     });
