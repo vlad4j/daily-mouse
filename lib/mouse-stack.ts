@@ -39,20 +39,24 @@ export class MouseStack extends Stack {
     });
     dynamoTable.grantReadWriteData(this.mouseLambda);
 
-    this.createMousePostRule();
+    this.createMousePostRules();
   }
 
-  private createMousePostRule() {
-    const lambdaTarget = new LambdaFunction(this.mouseLambda, {
-      maxEventAge: Duration.hours(2),
-      event: RuleTargetInput.fromObject({generator: ImageGeneratorType.DEEP_AI}),
-      retryAttempts: 1
-    });
+  private createMousePostRules() {
+    const firstEventHour = 9;
 
-    new Rule(this, 'ScheduleRule', {
-      schedule: Schedule.cron({minute: '0', hour: '9'}),
-      targets: [lambdaTarget],
-    });
+    Object.values(ImageGeneratorType).forEach((generator, i) => {
+      const lambdaTarget = new LambdaFunction(this.mouseLambda, {
+        maxEventAge: Duration.hours(2),
+        event: RuleTargetInput.fromObject({generator}),
+        retryAttempts: 1
+      });
+
+      new Rule(this, `ScheduleRule${generator}`, {
+        schedule: Schedule.cron({minute: '0', hour: (firstEventHour + i).toString()}),
+        targets: [lambdaTarget],
+      });
+    })
   }
 
   private createModeJsLayer() {
