@@ -10,6 +10,10 @@ for path in ${layers[@]}; do
 
   echo "Moving node_modules for ${name} ..."
   mv $path/node_modules dist/$path/node_modules
-#  zip -r -q dist/$path dist/$path/$name.zip
-  powershell Compress-Archive dist/$path dist/$path/$name.zip
+
+  if [ "$(uname)" == "Darwin" ] || [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
+     cd dist/$path/..; zip -r -q $name/$name.zip ./; cd -
+  else
+    powershell Compress-Archive dist/$path dist/$path/$name.zip
+  fi
 done
