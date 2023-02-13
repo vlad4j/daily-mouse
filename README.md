@@ -1,15 +1,30 @@
-# Welcome to your CDK TypeScript project
+# Daily mouse pictures generator
 
-You should explore the contents of this project. It demonstrates a CDK app with an instance of a stack (`MouseStack`)
-which contains an Amazon SQS queue that is subscribed to an Amazon SNS topic.
+Generates and posts mouse pictures to the [@DailyDeepMouse](https://twitter.com/DailyDeepMouse) twitter account.
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+Project consists of a single lambda which generates pictures with a randomly generated text prompt.
+Text prompts are generated using OpenAI GPT 3.0.
+Mouse images are generated using DALL-E and StableDiffusion.
+StableDiffusion is provided by DeepAI API.
 
-## Useful commands
+## Project configuration
+
+Create a Secret in `AWS Secret Manager` with name `API_KEYS` and secret values:
+- `OPENAI_API_KEY` - OpenAI API key
+- `DEEPAI_API_KEY` - DeepAI API key
+- `TWITTER_APP_KEY` - Obtained on Twitter Developer Portal
+- `TWITTER_APP_SECRET` - Obtained on Twitter Developer Portal
+- `TWITTER_ACCESS_TOKEN` - Obtained on Twitter Developer Portal
+- `TWITTER_ACCESS_SECRET` - Obtained on Twitter Developer Portal
+
+> Note: AWS Secret Manager secrets should be stored in the same account as in lambda
+
+## Deployment
+> Make sure that your awscli is configured before deployment.
+> To configure awscli run:
+> `aws configure`
+> 
+> Please note that default awscli region will be used as deployment region
 
 * `npm run build`   compile typescript to js
-* `npm run watch`   watch for changes and compile
-* `npm run test`    perform the jest unit tests
-* `cdk deploy`      deploy this stack to your default AWS account/region
-* `cdk diff`        compare deployed stack with current state
-* `cdk synth`       emits the synthesized CloudFormation template
+* `npm run deploy`   generate CloudFormation template and deploy
