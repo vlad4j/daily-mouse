@@ -24,14 +24,23 @@ interface GeneratedImage {
 }
 
 const getPrompt = (): string => {
+//   const prompts = [
+//     'generate a random situation with a mouse limited to 250 characters.',
+//     'Give me a prompt to generate a picture with a mouse',
+//     'Give me a prompt of a cute mouse picture',
+//     `Topic: Mouse in a wild
+// Two-sentence story:`,
+//     `Topic: Home mouse
+// One-sentence story:`
+//   ];
+
+  // V2
   const prompts = [
-    'generate a random situation with a mouse limited to 250 characters.',
-    `Topic: Mouse
-Two-sentence story:`,
-    `Topic: Mouse in a wild
-Two-sentence story:`,
-    `Topic: Home mouse
-One-sentence story:`
+    'Give me a prompt to generate a picture with a mouse',
+    'Give me a prompt of a cute mouse picture',
+    'Give me a prompt of a wild mouse picture',
+    'Give me a prompt of a house mouse picture',
+    'Give me a prompt of a pet mouse picture'
   ];
 
   const rnd = Math.floor(Math.random() * prompts.length);
